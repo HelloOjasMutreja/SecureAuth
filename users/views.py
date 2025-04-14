@@ -2,13 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from .utils import send_verification_email, verify_token
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 
 User = get_user_model()
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
@@ -16,7 +16,7 @@ def register(request):
             send_verification_email(user)
             return HttpResponse("Check your email to verify your account.")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
 def verify_email(request, token):
